@@ -1,14 +1,68 @@
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import AccessibilityDrawer from "./AccessibilityDrawer";
 
 const WelcomeScreen = () => {
+  // Accessibility state management
+  const [isAccessibilityDrawerVisible, setIsAccessibilityDrawerVisible] = useState(false);
+  const [contrast, setContrast] = useState(false);
+  const [highlightLinks, setHighlightLinks] = useState(false);
+  const [biggerText, setBiggerText] = useState(false);
+  const [textSpacing, setTextSpacing] = useState(false);
+  const [pauseAnimations, setPauseAnimations] = useState(false);
+  const [dyslexia, setDyslexia] = useState(false);
+  const [cursor, setCursor] = useState(false);
+  const [textAlign, setTextAlign] = useState<"left" | "center" | "right">("left");
+  const [lineHeight, setLineHeight] = useState(false);
+
+  // Accessibility handlers
+  const handleToggleContrast = () => setContrast(!contrast);
+  const handleToggleHighlightLinks = () => setHighlightLinks(!highlightLinks);
+  const handleToggleBiggerText = () => setBiggerText(!biggerText);
+  const handleToggleTextSpacing = () => setTextSpacing(!textSpacing);
+  const handleTogglePauseAnimations = () => setPauseAnimations(!pauseAnimations);
+  const handleToggleDyslexia = () => setDyslexia(!dyslexia);
+  const handleToggleCursor = () => setCursor(!cursor);
+  const handleToggleTextAlign = () => {
+    const alignments: ("left" | "center" | "right")[] = ["left", "center", "right"];
+    const currentIndex = alignments.indexOf(textAlign);
+    const nextIndex = (currentIndex + 1) % alignments.length;
+    setTextAlign(alignments[nextIndex]);
+  };
+  const handleToggleLineHeight = () => setLineHeight(!lineHeight);
+  const handleResetAll = () => {
+    setContrast(false);
+    setHighlightLinks(false);
+    setBiggerText(false);
+    setTextSpacing(false);
+    setPauseAnimations(false);
+    setDyslexia(false);
+    setCursor(false);
+    setTextAlign("left");
+    setLineHeight(false);
+  };
+
+  // Get dynamic styles based on accessibility settings
+  const getTextStyles = (baseStyle: any) => ({
+    ...baseStyle,
+    lineHeight: lineHeight ? baseStyle.lineHeight * 1.5 : baseStyle.lineHeight,
+    letterSpacing: textSpacing ? (baseStyle.letterSpacing || 0) + 2 : baseStyle.letterSpacing,
+    textAlign: textAlign,
+    fontSize: biggerText ? baseStyle.fontSize * 1.2 : baseStyle.fontSize,
+    color: contrast ? '#000000' : baseStyle.color,
+  });
+
+  const getContainerStyles = () => ({
+    backgroundColor: contrast ? '#FFFFFF' : 'transparent',
+  });
+
   return (
     <>
       <View style={styles.topBar}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => setIsAccessibilityDrawerVisible(true)}>
           <View style={styles.accessibilityButton}>
             <View style={styles.accessibilityIconContainer}>
               <Ionicons name="accessibility" style={styles.accessibilityIcon} />
@@ -29,7 +83,7 @@ const WelcomeScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.bottomContainer}>
+      <View style={[styles.bottomContainer, getContainerStyles()]}>
         {/* Main Content */}
         <View style={styles.content}>
           {/* Logo Section */}
@@ -39,15 +93,15 @@ const WelcomeScreen = () => {
               style={styles.logo}
               resizeMode="contain"
             />
-            <Text style={styles.appName}>LiftUP Ai</Text>
+            <Text style={getTextStyles(styles.appName)}>LiftUP Ai</Text>
           </View>
 
           {/* Welcome Text */}
           <View style={styles.welcomeTextContainer}>
-            <Text style={styles.welcomeText}>Welcome to</Text>
-            <Text style={styles.welcomeTextAppName}>LiftUP Ai</Text>
+            <Text style={getTextStyles(styles.welcomeText)}>Welcome to</Text>
+            <Text style={getTextStyles(styles.welcomeTextAppName)}>LiftUP Ai</Text>
           </View>
-          <Text style={styles.subtitle}>Your Smart Learning Companion!</Text>
+          <Text style={getTextStyles(styles.subtitle)}>Your Smart Learning Companion!</Text>
         </View>
 
         {/* Button Section */}
@@ -74,6 +128,31 @@ const WelcomeScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* Accessibility Drawer */}
+      <AccessibilityDrawer
+        visible={isAccessibilityDrawerVisible}
+        onClose={() => setIsAccessibilityDrawerVisible(false)}
+        contrast={contrast}
+        onToggleContrast={handleToggleContrast}
+        highlightLinks={highlightLinks}
+        onToggleHighlightLinks={handleToggleHighlightLinks}
+        biggerText={biggerText}
+        onToggleBiggerText={handleToggleBiggerText}
+        textSpacing={textSpacing}
+        onToggleTextSpacing={handleToggleTextSpacing}
+        pauseAnimations={pauseAnimations}
+        onTogglePauseAnimations={handleTogglePauseAnimations}
+        dyslexia={dyslexia}
+        onToggleDyslexia={handleToggleDyslexia}
+        cursor={cursor}
+        onToggleCursor={handleToggleCursor}
+        textAlign={textAlign}
+        onToggleTextAlign={handleToggleTextAlign}
+        lineHeight={lineHeight}
+        onToggleLineHeight={handleToggleLineHeight}
+        onResetAll={handleResetAll}
+      />
     </>
   );
 };
@@ -156,6 +235,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: Colors.light.primary,
     letterSpacing: 0.5,
+    lineHeight: 42,
   },
   welcomeTextContainer: {
     marginBottom: 12,
@@ -167,18 +247,23 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: Colors.light.text,
     textAlign: "left",
+    lineHeight: 38,
+    letterSpacing: 0.5,
   },
   welcomeTextAppName: {
     fontSize: 32,
     fontWeight: "600",
     color: Colors.light.secondary,
     textAlign: "left",
+    lineHeight: 38,
+    letterSpacing: 0.5,
   },
   subtitle: {
     fontSize: 16,
     color: Colors.light.textSecondary,
     textAlign: "center",
     lineHeight: 24,
+    letterSpacing: 0.3,
   },
   buttonContainer: {
     marginBottom: 40,
