@@ -10,23 +10,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Colors } from "../../constants/Colors";
 
 const StartScreen = () => {
   return (
     <LinearGradient
       style={styles.container}
       colors={[
-        "rgba(247, 225, 250, 1)",
-        "rgba(242, 228, 228, 1)",
-        "rgba(242, 228, 228, 1)",
-        "rgba(247, 225, 250, 1)",
+        "#f7e1fa",
+        "#f2e4e4",
+        "#f2e4e4",
+        "#f7e1fa",
       ]}
       locations={[0, 0.15, 0.7, 1]}
       start={{ x: 0.5, y: 1 }}
       end={{ x: 0.5, y: 0 }}
     >
       <SafeAreaView style={styles.safeArea}>
-        <StatusBar barStyle="dark-content" backgroundColor="#FFE5EC" />
+        <StatusBar barStyle="dark-content" backgroundColor={Colors.light.background} />
 
         <View style={styles.topBar}>
           <TouchableOpacity>
@@ -48,7 +49,7 @@ const StartScreen = () => {
                 resizeMode="contain"
               />
               <Text style={styles.languageText}>English</Text>
-              <Ionicons name="chevron-down" size={20} color="black" />
+              <Ionicons name="chevron-down" size={20} color="#000000" />
             </View>
           </TouchableOpacity>
         </View>
@@ -77,7 +78,7 @@ const StartScreen = () => {
           {/* Button Section */}
           <View style={styles.buttonContainer}>
             <LinearGradient
-              colors={["rgba(255, 224, 102, 1)", "rgba(157, 78, 221, 1)"]}
+              colors={["#ffe066", "#9d4edd"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }} // 90deg → left to right
               style={styles.getStartedButton}
@@ -90,7 +91,7 @@ const StartScreen = () => {
                 }}
               >
                 <Text style={styles.getStartedText}>Get Started</Text>
-                <Ionicons name="chevron-forward" size={24} color="white" />
+                <Ionicons name="chevron-forward" size={24} color="#ffffff" />
               </View>
             </LinearGradient>
             <TouchableOpacity style={styles.loginButton}>
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: "rgba(123, 44, 191, 0.1)",
+    backgroundColor: Colors.light.surfaceTransparent,
     borderRadius: 20,
   },
   accessibilityIconContainer: {
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 24,
     width: 24,
-    borderColor: "black",
+    borderColor: Colors.light.borderDark,
     borderWidth: 1.5,
     borderRadius: 9999,
   },
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   accessibilityText: {
-    color: "#7B2CBF",
+    color: Colors.light.primary,
     fontSize: 16,
     fontWeight: "500",
   },
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: "rgba(123, 44, 191, 0.1)",
+    backgroundColor: Colors.light.surfaceTransparent,
     borderRadius: 20,
   },
   languageIcon: {
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
     height: 20,
   },
   languageText: {
-    color: "#7B2CBF",
+    color: Colors.light.primary,
     fontSize: 16,
     fontWeight: "500",
   },
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 36,
     fontWeight: "bold",
-    color: "#7B2CBF",
+    color: Colors.light.primary,
     letterSpacing: 0.5,
   },
   welcomeTextContainer: {
@@ -198,18 +199,18 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 32,
     fontWeight: "600",
-    color: "#333",
+    color: Colors.light.text,
     textAlign: "left",
   },
   welcomeTextAppName: {
     fontSize: 32,
     fontWeight: "600",
-    color: "#9d4edd",
+    color: Colors.light.secondary,
     textAlign: "left",
   },
   subtitle: {
     fontSize: 16,
-    color: "#666",
+    color: Colors.light.textSecondary,
     textAlign: "center",
     lineHeight: 24,
   },
@@ -229,14 +230,14 @@ const styles = StyleSheet.create({
     // elevation: 5,
   },
   getStartedText: {
-    color: "white",
+    color: "#ffffff",
     fontSize: 18,
     fontWeight: "600",
   },
   loginButton: {
     paddingVertical: 16,
     borderRadius: 30,
-    backgroundColor: "white",
+    backgroundColor: Colors.light.surface,
     alignItems: "center",
   },
   loginText: {
