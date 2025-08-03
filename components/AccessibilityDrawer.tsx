@@ -1,13 +1,8 @@
 import { Colors } from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import React from "react";
-import {
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface AccessibilityDrawerProps {
   visible: boolean;
@@ -58,94 +53,119 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
 }) => {
   const accessibilityOptions = [
     {
-      id: 'contrast',
-      title: 'Contrast+',
-      icon: 'contrast' as keyof typeof Ionicons.glyphMap,
+      id: "contrast",
+      title: "Contrast+",
+      icon: "contrast" as keyof typeof Ionicons.glyphMap,
+      iconSet: "Ionicons" as const,
       isActive: contrast,
       onToggle: onToggleContrast,
     },
     {
-      id: 'highlightLinks',
-      title: 'Highlight Links',
-      icon: 'link-outline' as keyof typeof Ionicons.glyphMap,
+      id: "highlightLinks",
+      title: "Highlight Links",
+      icon: "link-outline" as keyof typeof Ionicons.glyphMap,
+      iconSet: "Ionicons" as const,
       isActive: highlightLinks,
       onToggle: onToggleHighlightLinks,
     },
     {
-      id: 'biggerText',
-      title: 'Bigger Text',
-      icon: 'text-outline' as keyof typeof Ionicons.glyphMap,
+      id: "biggerText",
+      title: "Bigger Text",
+      icon: "text-outline" as keyof typeof Ionicons.glyphMap,
+      iconSet: "Ionicons" as const,
       isActive: biggerText,
       onToggle: onToggleBiggerText,
     },
     {
-      id: 'textSpacing',
-      title: 'Text Spacing',
-      icon: 'reorder-four-outline' as keyof typeof Ionicons.glyphMap,
+      id: "textSpacing",
+      title: "Text Spacing",
+      icon: "reorder-four-outline" as keyof typeof Ionicons.glyphMap,
+      iconSet: "Ionicons" as const,
       isActive: textSpacing,
       onToggle: onToggleTextSpacing,
     },
     {
-      id: 'pauseAnimations',
-      title: 'Pause Animations',
-      icon: 'pause-circle-outline' as keyof typeof Ionicons.glyphMap,
+      id: "pauseAnimations",
+      title: "Pause Animations",
+      icon: "pause-circle-outline" as keyof typeof Ionicons.glyphMap,
+      iconSet: "Ionicons" as const,
       isActive: pauseAnimations,
       onToggle: onTogglePauseAnimations,
     },
     {
-      id: 'dyslexia',
-      title: 'Dyslexia',
-      icon: 'library-outline' as keyof typeof Ionicons.glyphMap,
+      id: "dyslexia",
+      title: "Dyslexia",
+      icon: "library-outline" as keyof typeof Ionicons.glyphMap,
+      iconSet: "Ionicons" as const,
       isActive: dyslexia,
       onToggle: onToggleDyslexia,
     },
     {
-      id: 'cursor',
-      title: 'Cursor',
-      icon: 'navigate-outline' as keyof typeof Ionicons.glyphMap,
+      id: "cursor",
+      title: "Cursor",
+      icon: "navigate-outline" as keyof typeof Ionicons.glyphMap,
+      iconSet: "Ionicons" as const,
       isActive: cursor,
       onToggle: onToggleCursor,
     },
     {
-      id: 'textAlign',
-      title: 'Text Align',
-      icon: 'list-outline' as keyof typeof Ionicons.glyphMap,
-      isActive: textAlign !== 'left',
+      id: "textAlign",
+      title: "Text Align",
+      icon: (textAlign === "center"
+        ? "align-center"
+        : textAlign === "right"
+        ? "align-right"
+        : "align-left") as keyof typeof Feather.glyphMap,
+      iconSet: "Feather" as const,
+      isActive: textAlign !== "left",
       onToggle: onToggleTextAlign,
     },
     {
-      id: 'lineHeight',
-      title: 'Line Height',
-      icon: 'resize-outline' as keyof typeof Ionicons.glyphMap,
+      id: "lineHeight",
+      title: "Line Height",
+      icon: "resize-outline" as keyof typeof Ionicons.glyphMap,
+      iconSet: "Ionicons" as const,
       isActive: lineHeight,
       onToggle: onToggleLineHeight,
     },
   ];
 
-  const renderAccessibilityOption = (option: typeof accessibilityOptions[0]) => (
+  const renderAccessibilityOption = (
+    option: (typeof accessibilityOptions)[0]
+  ) => (
     <TouchableOpacity
       key={option.id}
-      style={[
-        styles.optionCard,
-        option.isActive && styles.optionCardActive
-      ]}
+      style={[styles.optionCard, option.isActive && styles.optionCardActive]}
       onPress={option.onToggle}
       activeOpacity={0.7}
     >
-      <View style={[
-        styles.iconContainer,
-        option.isActive && styles.iconContainerActive
-      ]}>
-        <Ionicons
-          name={option.icon}
-          size={24}
-          color={option.isActive ? Colors.light.surface : Colors.light.primary}
-        />
+      <View
+        style={[
+          styles.iconContainer,
+          option.isActive && styles.iconContainerActive,
+        ]}
+      >
+        {option.iconSet === "Ionicons" ? (
+          <Ionicons
+            name={option.icon as keyof typeof Ionicons.glyphMap}
+            size={24}
+            color={
+              option.isActive ? Colors.light.surface : Colors.light.primary
+            }
+          />
+        ) : (
+          <Feather
+            name={option.icon as keyof typeof Feather.glyphMap}
+            size={24}
+            color={
+              option.isActive ? Colors.light.surface : Colors.light.primary
+            }
+          />
+        )}
       </View>
-      <Text style={[
-        styles.optionText,
-        option.isActive && styles.optionTextActive
-      ]}>
+      <Text
+        style={[styles.optionText, option.isActive && styles.optionTextActive]}
+      >
         {option.title}
       </Text>
     </TouchableOpacity>
@@ -160,7 +180,7 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
     >
       <View style={styles.overlay}>
         <TouchableOpacity style={styles.overlayTouch} onPress={onClose} />
-        <View style={styles.drawerContainer}>
+        <BlurView intensity={100} tint="light" style={styles.drawerContainer}>
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Accessibility Menu</Text>
@@ -188,7 +208,7 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
             />
             <Text style={styles.resetButtonText}>Reset All Accessibility</Text>
           </TouchableOpacity>
-        </View>
+        </BlurView>
       </View>
     </Modal>
   );
@@ -197,19 +217,19 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "flex-end",
   },
   overlayTouch: {
     flex: 1,
   },
   drawerContainer: {
-    backgroundColor: "transparent",
+    backgroundColor: "#9d4ed77",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
     paddingBottom: 40,
     maxHeight: "60%",
+    overflow: "hidden",
   },
   header: {
     flexDirection: "row",
@@ -217,7 +237,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 20,
     paddingBottom: 16,
-    backgroundColor: Colors.light.surface,
     marginHorizontal: -20,
     paddingHorizontal: 20,
     borderTopLeftRadius: 24,
@@ -241,7 +260,7 @@ const styles = StyleSheet.create({
   optionCard: {
     width: "30%",
     aspectRatio: 1,
-    backgroundColor: Colors.light.surface,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
     borderRadius: 16,
     padding: 12,
     alignItems: "center",
@@ -257,7 +276,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.light.surfaceTransparent,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 8,
@@ -276,8 +295,8 @@ const styles = StyleSheet.create({
     color: Colors.light.surface,
   },
   resetButton: {
-    backgroundColor: Colors.light.primary,
-    borderRadius: 16,
+    backgroundColor: Colors.light.secondary,
+    borderRadius: 24,
     paddingVertical: 16,
     paddingHorizontal: 20,
     marginTop: 20,

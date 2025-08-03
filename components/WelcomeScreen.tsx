@@ -1,13 +1,14 @@
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AccessibilityDrawer from "./AccessibilityDrawer";
 
 const WelcomeScreen = () => {
   // Accessibility state management
-  const [isAccessibilityDrawerVisible, setIsAccessibilityDrawerVisible] = useState(false);
+  const [isAccessibilityDrawerVisible, setIsAccessibilityDrawerVisible] =
+    useState(false);
   const [contrast, setContrast] = useState(false);
   const [highlightLinks, setHighlightLinks] = useState(false);
   const [biggerText, setBiggerText] = useState(false);
@@ -15,19 +16,35 @@ const WelcomeScreen = () => {
   const [pauseAnimations, setPauseAnimations] = useState(false);
   const [dyslexia, setDyslexia] = useState(false);
   const [cursor, setCursor] = useState(false);
-  const [textAlign, setTextAlign] = useState<"left" | "center" | "right">("left");
+  const [textAlign, setTextAlign] = useState<"left" | "center" | "right">(
+    "left"
+  );
   const [lineHeight, setLineHeight] = useState(false);
+  const textAlignProperty = useMemo(
+    () =>
+      textAlign === "left"
+        ? "flex-start"
+        : textAlign === "center"
+        ? "center"
+        : "flex-end",
+    [textAlign]
+  );
 
   // Accessibility handlers
   const handleToggleContrast = () => setContrast(!contrast);
   const handleToggleHighlightLinks = () => setHighlightLinks(!highlightLinks);
   const handleToggleBiggerText = () => setBiggerText(!biggerText);
   const handleToggleTextSpacing = () => setTextSpacing(!textSpacing);
-  const handleTogglePauseAnimations = () => setPauseAnimations(!pauseAnimations);
+  const handleTogglePauseAnimations = () =>
+    setPauseAnimations(!pauseAnimations);
   const handleToggleDyslexia = () => setDyslexia(!dyslexia);
   const handleToggleCursor = () => setCursor(!cursor);
   const handleToggleTextAlign = () => {
-    const alignments: ("left" | "center" | "right")[] = ["left", "center", "right"];
+    const alignments: ("left" | "center" | "right")[] = [
+      "left",
+      "center",
+      "right",
+    ];
     const currentIndex = alignments.indexOf(textAlign);
     const nextIndex = (currentIndex + 1) % alignments.length;
     setTextAlign(alignments[nextIndex]);
@@ -49,14 +66,16 @@ const WelcomeScreen = () => {
   const getTextStyles = (baseStyle: any) => ({
     ...baseStyle,
     lineHeight: lineHeight ? baseStyle.lineHeight * 1.5 : baseStyle.lineHeight,
-    letterSpacing: textSpacing ? (baseStyle.letterSpacing || 0) + 2 : baseStyle.letterSpacing,
+    letterSpacing: textSpacing
+      ? (baseStyle.letterSpacing || 0) + 2
+      : baseStyle.letterSpacing,
     textAlign: textAlign,
     fontSize: biggerText ? baseStyle.fontSize * 1.2 : baseStyle.fontSize,
-    color: contrast ? '#000000' : baseStyle.color,
+    color: contrast ? "#000000" : baseStyle.color,
   });
 
   const getContainerStyles = () => ({
-    backgroundColor: contrast ? '#FFFFFF' : 'transparent',
+    backgroundColor: contrast ? "#FFFFFF" : "transparent",
   });
 
   return (
@@ -85,9 +104,28 @@ const WelcomeScreen = () => {
 
       <View style={[styles.bottomContainer, getContainerStyles()]}>
         {/* Main Content */}
-        <View style={styles.content}>
+        <View
+          style={[
+            styles.content,
+            {
+              alignItems:
+                textAlign === "left"
+                  ? "flex-start"
+                  : textAlign === "center"
+                  ? "center"
+                  : "flex-end",
+            },
+          ]}
+        >
           {/* Logo Section */}
-          <View style={styles.logoContainer}>
+          <View
+            style={[
+              styles.logoContainer,
+              {
+                alignItems: textAlignProperty,
+              },
+            ]}
+          >
             <Image
               source={require("../assets/images/us-flag.png")} // Replace with your actual asset
               style={styles.logo}
@@ -97,11 +135,22 @@ const WelcomeScreen = () => {
           </View>
 
           {/* Welcome Text */}
-          <View style={styles.welcomeTextContainer}>
+          <View
+            style={[
+              styles.welcomeTextContainer,
+              {
+                alignItems: textAlignProperty,
+              },
+            ]}
+          >
             <Text style={getTextStyles(styles.welcomeText)}>Welcome to</Text>
-            <Text style={getTextStyles(styles.welcomeTextAppName)}>LiftUP Ai</Text>
+            <Text style={getTextStyles(styles.welcomeTextAppName)}>
+              LiftUP Ai
+            </Text>
           </View>
-          <Text style={getTextStyles(styles.subtitle)}>Your Smart Learning Companion!</Text>
+          <Text style={getTextStyles(styles.subtitle)}>
+            Your Smart Learning Companion!
+          </Text>
         </View>
 
         {/* Button Section */}
@@ -246,7 +295,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "600",
     color: Colors.light.text,
-    textAlign: "left",
     lineHeight: 38,
     letterSpacing: 0.5,
   },
@@ -254,14 +302,12 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "600",
     color: Colors.light.secondary,
-    textAlign: "left",
     lineHeight: 38,
     letterSpacing: 0.5,
   },
   subtitle: {
     fontSize: 16,
     color: Colors.light.textSecondary,
-    textAlign: "center",
     lineHeight: 24,
     letterSpacing: 0.3,
   },
