@@ -4,22 +4,22 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useMemo, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AccessibilityDrawer from "./AccessibilityDrawer";
+import { Logo } from "./Icons";
 
 const WelcomeScreen = () => {
-  // Accessibility state management
+  // state management
   const [isAccessibilityDrawerVisible, setIsAccessibilityDrawerVisible] =
     useState(false);
-  const [contrast, setContrast] = useState(false);
-  const [highlightLinks, setHighlightLinks] = useState(false);
   const [biggerText, setBiggerText] = useState(false);
-  const [textSpacing, setTextSpacing] = useState(false);
-  const [pauseAnimations, setPauseAnimations] = useState(false);
-  const [dyslexia, setDyslexia] = useState(false);
-  const [cursor, setCursor] = useState(false);
+  const [textSpacing, setTextSpacing] = useState<
+    "tight" | "normal" | "relaxed" | "loose" | "extra-loose"
+  >("normal");
   const [textAlign, setTextAlign] = useState<"left" | "center" | "right">(
     "left"
   );
-  const [lineHeight, setLineHeight] = useState(false);
+  const [lineHeight, setLineHeight] = useState<
+    "tight" | "tighter" | "normal" | "wider" | "widest"
+  >("normal");
   const textAlignProperty = useMemo(
     () =>
       textAlign === "left"
@@ -30,15 +30,20 @@ const WelcomeScreen = () => {
     [textAlign]
   );
 
-  // Accessibility handlers
-  const handleToggleContrast = () => setContrast(!contrast);
-  const handleToggleHighlightLinks = () => setHighlightLinks(!highlightLinks);
+  // handlers
   const handleToggleBiggerText = () => setBiggerText(!biggerText);
-  const handleToggleTextSpacing = () => setTextSpacing(!textSpacing);
-  const handleTogglePauseAnimations = () =>
-    setPauseAnimations(!pauseAnimations);
-  const handleToggleDyslexia = () => setDyslexia(!dyslexia);
-  const handleToggleCursor = () => setCursor(!cursor);
+  const handleToggleTextSpacing = () => {
+    const spacings: (
+      | "tight"
+      | "normal"
+      | "relaxed"
+      | "loose"
+      | "extra-loose"
+    )[] = ["normal", "tight", "relaxed", "loose", "extra-loose"];
+    const currentIndex = spacings.indexOf(textSpacing);
+    const nextIndex = (currentIndex + 1) % spacings.length;
+    setTextSpacing(spacings[nextIndex]);
+  };
   const handleToggleTextAlign = () => {
     const alignments: ("left" | "center" | "right")[] = [
       "left",
@@ -49,33 +54,52 @@ const WelcomeScreen = () => {
     const nextIndex = (currentIndex + 1) % alignments.length;
     setTextAlign(alignments[nextIndex]);
   };
-  const handleToggleLineHeight = () => setLineHeight(!lineHeight);
+  const handleToggleLineHeight = () => {
+    const lineHeights: ("tight" | "tighter" | "normal" | "wider" | "widest")[] =
+      ["normal", "tight", "tighter", "wider", "widest"];
+    const currentIndex = lineHeights.indexOf(lineHeight);
+    const nextIndex = (currentIndex + 1) % lineHeights.length;
+    setLineHeight(lineHeights[nextIndex]);
+  };
   const handleResetAll = () => {
-    setContrast(false);
-    setHighlightLinks(false);
     setBiggerText(false);
-    setTextSpacing(false);
-    setPauseAnimations(false);
-    setDyslexia(false);
-    setCursor(false);
+    setTextSpacing("normal");
     setTextAlign("left");
-    setLineHeight(false);
+    setLineHeight("normal");
   };
 
-  // Get dynamic styles based on accessibility settings
-  const getTextStyles = (baseStyle: any) => ({
-    ...baseStyle,
-    lineHeight: lineHeight ? baseStyle.lineHeight * 1.5 : baseStyle.lineHeight,
-    letterSpacing: textSpacing
-      ? (baseStyle.letterSpacing || 0) + 2
-      : baseStyle.letterSpacing,
-    textAlign: textAlign,
-    fontSize: biggerText ? baseStyle.fontSize * 1.2 : baseStyle.fontSize,
-    color: contrast ? "#000000" : baseStyle.color,
-  });
+  // dynamic styles
+  const getTextStyles = (baseStyle: any) => {
+    const lineHeightMultipliers = {
+      tight: 0.8,
+      tighter: 0.9,
+      normal: 1.0,
+      wider: 1.3,
+      widest: 1.6,
+    };
+
+    const letterSpacingValues = {
+      tight: -0.5,
+      normal: 0,
+      relaxed: 1,
+      loose: 2,
+      "extra-loose": 3,
+    };
+
+    return {
+      ...baseStyle,
+      lineHeight:
+        (baseStyle.lineHeight || baseStyle.fontSize * 1.2) *
+        lineHeightMultipliers[lineHeight],
+      letterSpacing:
+        (baseStyle.letterSpacing || 0) + letterSpacingValues[textSpacing],
+      textAlign: textAlign,
+      fontSize: biggerText ? baseStyle.fontSize * 1.2 : baseStyle.fontSize,
+    };
+  };
 
   const getContainerStyles = () => ({
-    backgroundColor: contrast ? "#FFFFFF" : "transparent",
+    backgroundColor: "transparent",
   });
 
   return (
@@ -126,11 +150,7 @@ const WelcomeScreen = () => {
               },
             ]}
           >
-            <Image
-              source={require("../assets/images/us-flag.png")} // Replace with your actual asset
-              style={styles.logo}
-              resizeMode="contain"
-            />
+            <Logo style={styles.logo} />
             <Text style={getTextStyles(styles.appName)}>LiftUP Ai</Text>
           </View>
 
@@ -182,20 +202,10 @@ const WelcomeScreen = () => {
       <AccessibilityDrawer
         visible={isAccessibilityDrawerVisible}
         onClose={() => setIsAccessibilityDrawerVisible(false)}
-        contrast={contrast}
-        onToggleContrast={handleToggleContrast}
-        highlightLinks={highlightLinks}
-        onToggleHighlightLinks={handleToggleHighlightLinks}
         biggerText={biggerText}
         onToggleBiggerText={handleToggleBiggerText}
         textSpacing={textSpacing}
         onToggleTextSpacing={handleToggleTextSpacing}
-        pauseAnimations={pauseAnimations}
-        onTogglePauseAnimations={handleTogglePauseAnimations}
-        dyslexia={dyslexia}
-        onToggleDyslexia={handleToggleDyslexia}
-        cursor={cursor}
-        onToggleCursor={handleToggleCursor}
         textAlign={textAlign}
         onToggleTextAlign={handleToggleTextAlign}
         lineHeight={lineHeight}
@@ -277,7 +287,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 48,
     height: 48,
-    marginBottom: 15,
   },
   appName: {
     fontSize: 36,

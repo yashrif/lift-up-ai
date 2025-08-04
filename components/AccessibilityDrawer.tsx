@@ -4,47 +4,27 @@ import { BlurView } from "expo-blur";
 import React from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-interface AccessibilityDrawerProps {
+type AccessibilityDrawerProps = {
   visible: boolean;
   onClose: () => void;
-  contrast: boolean;
-  onToggleContrast: () => void;
-  highlightLinks: boolean;
-  onToggleHighlightLinks: () => void;
   biggerText: boolean;
   onToggleBiggerText: () => void;
-  textSpacing: boolean;
+  textSpacing: "tight" | "normal" | "relaxed" | "loose" | "extra-loose";
   onToggleTextSpacing: () => void;
-  pauseAnimations: boolean;
-  onTogglePauseAnimations: () => void;
-  dyslexia: boolean;
-  onToggleDyslexia: () => void;
-  cursor: boolean;
-  onToggleCursor: () => void;
   textAlign: "left" | "center" | "right";
   onToggleTextAlign: () => void;
-  lineHeight: boolean;
+  lineHeight: "tight" | "tighter" | "normal" | "wider" | "widest";
   onToggleLineHeight: () => void;
   onResetAll: () => void;
-}
+};
 
 const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
   visible,
   onClose,
-  contrast,
-  onToggleContrast,
-  highlightLinks,
-  onToggleHighlightLinks,
   biggerText,
   onToggleBiggerText,
   textSpacing,
   onToggleTextSpacing,
-  pauseAnimations,
-  onTogglePauseAnimations,
-  dyslexia,
-  onToggleDyslexia,
-  cursor,
-  onToggleCursor,
   textAlign,
   onToggleTextAlign,
   lineHeight,
@@ -57,16 +37,16 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
       title: "Contrast+",
       icon: "contrast" as keyof typeof Ionicons.glyphMap,
       iconSet: "Ionicons" as const,
-      isActive: contrast,
-      onToggle: onToggleContrast,
+      isActive: false,
+      onToggle: () => {},
     },
     {
       id: "highlightLinks",
       title: "Highlight Links",
       icon: "link-outline" as keyof typeof Ionicons.glyphMap,
       iconSet: "Ionicons" as const,
-      isActive: highlightLinks,
-      onToggle: onToggleHighlightLinks,
+      isActive: false,
+      onToggle: () => {},
     },
     {
       id: "biggerText",
@@ -79,9 +59,17 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
     {
       id: "textSpacing",
       title: "Text Spacing",
-      icon: "reorder-four-outline" as keyof typeof Ionicons.glyphMap,
+      icon: (textSpacing === "tight"
+        ? "contract-outline"
+        : textSpacing === "normal"
+        ? "reorder-four-outline"
+        : textSpacing === "relaxed"
+        ? "add-outline"
+        : textSpacing === "loose"
+        ? "expand-outline"
+        : "apps-outline") as keyof typeof Ionicons.glyphMap,
       iconSet: "Ionicons" as const,
-      isActive: textSpacing,
+      isActive: textSpacing !== "normal",
       onToggle: onToggleTextSpacing,
     },
     {
@@ -89,24 +77,24 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
       title: "Pause Animations",
       icon: "pause-circle-outline" as keyof typeof Ionicons.glyphMap,
       iconSet: "Ionicons" as const,
-      isActive: pauseAnimations,
-      onToggle: onTogglePauseAnimations,
+      isActive: false,
+      onToggle: () => {},
     },
     {
       id: "dyslexia",
       title: "Dyslexia",
       icon: "library-outline" as keyof typeof Ionicons.glyphMap,
       iconSet: "Ionicons" as const,
-      isActive: dyslexia,
-      onToggle: onToggleDyslexia,
+      isActive: false,
+      onToggle: () => {},
     },
     {
       id: "cursor",
       title: "Cursor",
       icon: "navigate-outline" as keyof typeof Ionicons.glyphMap,
       iconSet: "Ionicons" as const,
-      isActive: cursor,
-      onToggle: onToggleCursor,
+      isActive: false,
+      onToggle: () => {},
     },
     {
       id: "textAlign",
@@ -123,9 +111,17 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
     {
       id: "lineHeight",
       title: "Line Height",
-      icon: "resize-outline" as keyof typeof Ionicons.glyphMap,
+      icon: (lineHeight === "tight"
+        ? "contract-outline"
+        : lineHeight === "tighter"
+        ? "remove-outline"
+        : lineHeight === "normal"
+        ? "resize-outline"
+        : lineHeight === "wider"
+        ? "add-outline"
+        : "expand-outline") as keyof typeof Ionicons.glyphMap,
       iconSet: "Ionicons" as const,
-      isActive: lineHeight,
+      isActive: lineHeight !== "normal",
       onToggle: onToggleLineHeight,
     },
   ];
@@ -149,17 +145,13 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
           <Ionicons
             name={option.icon as keyof typeof Ionicons.glyphMap}
             size={24}
-            color={
-              option.isActive ? Colors.light.surface : Colors.light.primary
-            }
+            color={option.isActive ? Colors.light.surface : ""}
           />
         ) : (
           <Feather
             name={option.icon as keyof typeof Feather.glyphMap}
             size={24}
-            color={
-              option.isActive ? Colors.light.surface : Colors.light.primary
-            }
+            color={option.isActive ? Colors.light.surface : ""}
           />
         )}
       </View>
@@ -180,14 +172,16 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
     >
       <View style={styles.overlay}>
         <TouchableOpacity style={styles.overlayTouch} onPress={onClose} />
-        <BlurView intensity={100} tint="light" style={styles.drawerContainer}>
+        <BlurView intensity={120} tint="light" style={styles.drawerContainer}>
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Accessibility Menu</Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color={Colors.light.text} />
+              <Ionicons name="close" size={16} color={Colors.light.text} />
             </TouchableOpacity>
           </View>
+
+          <View style={styles.separator} />
 
           {/* Options Grid */}
           <View style={styles.optionsGrid}>
@@ -223,12 +217,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   drawerContainer: {
-    backgroundColor: "#9d4ed77",
+    backgroundColor: "#BF19FC99",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
-    paddingBottom: 40,
-    maxHeight: "60%",
+    paddingBottom: 80,
+    maxHeight: "63%",
     overflow: "hidden",
   },
   header: {
@@ -241,6 +235,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
+
+    borderTopColor: "white",
+    borderTopWidth: 2,
   },
   headerTitle: {
     fontSize: 18,
@@ -249,6 +246,13 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     padding: 4,
+    borderRadius: 9999,
+    borderWidth: 2,
+  },
+  separator: {
+    height: 2,
+    width: "100%",
+    backgroundColor: "white",
   },
   optionsGrid: {
     flexDirection: "row",
@@ -266,7 +270,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: "transparent",
+    borderColor: "white",
   },
   optionCardActive: {
     backgroundColor: Colors.light.primary,
