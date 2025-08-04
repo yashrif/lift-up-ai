@@ -1,4 +1,4 @@
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { AccessibilityDrawerProps } from "@/types/accessibility";
 
@@ -63,8 +63,8 @@ export const accessibilityOptions = ({
   {
     id: "dyslexia",
     title: "Dyslexia",
-    icon: "library-outline" as keyof typeof Ionicons.glyphMap,
-    iconSet: "Ionicons" as const,
+    icon: "brain" as keyof typeof MaterialCommunityIcons.glyphMap,
+    iconSet: "MaterialCommunityIcons" as const,
     isActive: false,
     onToggle: () => {},
   },
