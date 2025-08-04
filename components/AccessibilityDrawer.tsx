@@ -1,4 +1,4 @@
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import React from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -32,9 +32,15 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = (props) => {
             size={24}
             color={option.isActive ? colors.light.surface : ""}
           />
-        ) : (
+        ) : option.iconSet === "Feather" ? (
           <Feather
             name={option.icon as keyof typeof Feather.glyphMap}
+            size={24}
+            color={option.isActive ? colors.light.surface : ""}
+          />
+        ) : (
+          <MaterialCommunityIcons
+            name={option.icon as keyof typeof MaterialCommunityIcons.glyphMap}
             size={24}
             color={option.isActive ? colors.light.surface : ""}
           />

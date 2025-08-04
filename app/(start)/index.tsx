@@ -1,8 +1,9 @@
-import WelcomeScreen from "@/components/WelcomeScreen";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
-import { colors } from "../../constants/colors";
+
+import WelcomeScreen from "@/components/WelcomeScreen";
+import { colors } from "@/constants/colors";
 
 const StartScreen = () => {
   return (

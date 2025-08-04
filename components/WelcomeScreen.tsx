@@ -1,107 +1,63 @@
-import { colors } from "@/constants/colors";
-import { welcomeTexts } from "@/constants/welcome";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useMemo, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { colors } from "@/constants/colors";
+import { welcomeTexts } from "@/constants/welcome";
+import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
+import {
+  applyAccessibilityStyles,
+  getFlexAlignment,
+} from "@/utils/accessibilityUtils";
 import AccessibilityDrawer from "./AccessibilityDrawer";
 import { Logo } from "./Icons";
+import LoadingSpinner from "./LoadingSpinner";
 
 const WelcomeScreen = () => {
-  // safe area insets for proper spacing
   const insets = useSafeAreaInsets();
+
+  // accessibility settings
+  const {
+    biggerText,
+    textSpacing,
+    textAlign,
+    lineHeight,
+    toggleBiggerText,
+    toggleTextSpacing,
+    toggleTextAlign,
+    toggleLineHeight,
+    resetAll,
+    isLoaded,
+  } = useAccessibilitySettings();
 
   // state management
   const [isAccessibilityDrawerVisible, setIsAccessibilityDrawerVisible] =
     useState(false);
-  const [biggerText, setBiggerText] = useState(false);
-  const [textSpacing, setTextSpacing] = useState<
-    "tight" | "normal" | "relaxed" | "loose" | "extra-loose"
-  >("normal");
-  const [textAlign, setTextAlign] = useState<"left" | "center" | "right">(
-    "left"
-  );
-  const [lineHeight, setLineHeight] = useState<
-    "tight" | "tighter" | "normal" | "wider" | "widest"
-  >("normal");
+
   const textAlignProperty = useMemo(
-    () =>
-      textAlign === "left"
-        ? "flex-start"
-        : textAlign === "center"
-        ? "center"
-        : "flex-end",
+    () => getFlexAlignment(textAlign),
     [textAlign]
   );
 
-  // handlers
-  const handleToggleBiggerText = () => setBiggerText(!biggerText);
-  const handleToggleTextSpacing = () => {
-    const spacings: (
-      | "tight"
-      | "normal"
-      | "relaxed"
-      | "loose"
-      | "extra-loose"
-    )[] = ["normal", "tight", "relaxed", "loose", "extra-loose"];
-    const currentIndex = spacings.indexOf(textSpacing);
-    const nextIndex = (currentIndex + 1) % spacings.length;
-    setTextSpacing(spacings[nextIndex]);
-  };
-  const handleToggleTextAlign = () => {
-    const alignments: ("left" | "center" | "right")[] = [
-      "left",
-      "center",
-      "right",
-    ];
-    const currentIndex = alignments.indexOf(textAlign);
-    const nextIndex = (currentIndex + 1) % alignments.length;
-    setTextAlign(alignments[nextIndex]);
-  };
-  const handleToggleLineHeight = () => {
-    const lineHeights: ("tight" | "tighter" | "normal" | "wider" | "widest")[] =
-      ["normal", "tight", "tighter", "wider", "widest"];
-    const currentIndex = lineHeights.indexOf(lineHeight);
-    const nextIndex = (currentIndex + 1) % lineHeights.length;
-    setLineHeight(lineHeights[nextIndex]);
-  };
-  const handleResetAll = () => {
-    setBiggerText(false);
-    setTextSpacing("normal");
-    setTextAlign("left");
-    setLineHeight("normal");
-  };
-
   // dynamic styles
   const getTextStyles = (baseStyle: any) => {
-    const lineHeightMultipliers = {
-      tight: 0.8,
-      tighter: 0.9,
-      normal: 1.0,
-      wider: 1.3,
-      widest: 1.6,
-    };
-
-    const letterSpacingValues = {
-      tight: -0.5,
-      normal: 0,
-      relaxed: 1,
-      loose: 2,
-      "extra-loose": 3,
-    };
-
-    return {
-      ...baseStyle,
-      lineHeight:
-        (baseStyle.lineHeight || baseStyle.fontSize * 1.2) *
-        lineHeightMultipliers[lineHeight],
-      letterSpacing:
-        (baseStyle.letterSpacing || 0) + letterSpacingValues[textSpacing],
-      textAlign: textAlign,
-      fontSize: biggerText ? baseStyle.fontSize * 1.2 : baseStyle.fontSize,
-    };
+    return applyAccessibilityStyles(baseStyle, {
+      biggerText,
+      textSpacing,
+      textAlign,
+      lineHeight,
+    });
   };
+
+  if (!isLoaded) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
+        <LoadingSpinner message="Loading accessibility settings..." />
+      </View>
+    );
+  }
 
   return (
     <>
@@ -214,14 +170,14 @@ const WelcomeScreen = () => {
         visible={isAccessibilityDrawerVisible}
         onClose={() => setIsAccessibilityDrawerVisible(false)}
         biggerText={biggerText}
-        onToggleBiggerText={handleToggleBiggerText}
+        onToggleBiggerText={toggleBiggerText}
         textSpacing={textSpacing}
-        onToggleTextSpacing={handleToggleTextSpacing}
+        onToggleTextSpacing={toggleTextSpacing}
         textAlign={textAlign}
-        onToggleTextAlign={handleToggleTextAlign}
+        onToggleTextAlign={toggleTextAlign}
         lineHeight={lineHeight}
-        onToggleLineHeight={handleToggleLineHeight}
-        onResetAll={handleResetAll}
+        onToggleLineHeight={toggleLineHeight}
+        onResetAll={resetAll}
       />
     </>
   );
@@ -229,6 +185,10 @@ const WelcomeScreen = () => {
 
 // Styles
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "transparent",
+  },
   topBar: {
     flexDirection: "row",
     justifyContent: "space-between",
