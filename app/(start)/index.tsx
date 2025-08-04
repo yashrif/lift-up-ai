@@ -2,7 +2,7 @@ import WelcomeScreen from "@/components/WelcomeScreen";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
-import { Colors } from "../../constants/Colors";
+import { colors } from "../../constants/colors";
 
 const StartScreen = () => {
   return (
@@ -16,7 +16,7 @@ const StartScreen = () => {
       <SafeAreaView style={styles.safeArea}>
         <StatusBar
           barStyle="dark-content"
-          backgroundColor={Colors.light.background}
+          backgroundColor={colors.light.background}
         />
         <WelcomeScreen />
       </SafeAreaView>

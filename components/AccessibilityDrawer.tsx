@@ -1,134 +1,19 @@
-import { Colors } from "@/constants/Colors";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import React from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-type AccessibilityDrawerProps = {
-  visible: boolean;
-  onClose: () => void;
-  biggerText: boolean;
-  onToggleBiggerText: () => void;
-  textSpacing: "tight" | "normal" | "relaxed" | "loose" | "extra-loose";
-  onToggleTextSpacing: () => void;
-  textAlign: "left" | "center" | "right";
-  onToggleTextAlign: () => void;
-  lineHeight: "tight" | "tighter" | "normal" | "wider" | "widest";
-  onToggleLineHeight: () => void;
-  onResetAll: () => void;
-};
+import { accessibilityOptions } from "@/constants/accessibility";
+import { colors } from "@/constants/colors";
+import {
+  AccessibilityDrawerProps,
+  AccessibilityOption,
+} from "@/types/accessibility";
 
-const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
-  visible,
-  onClose,
-  biggerText,
-  onToggleBiggerText,
-  textSpacing,
-  onToggleTextSpacing,
-  textAlign,
-  onToggleTextAlign,
-  lineHeight,
-  onToggleLineHeight,
-  onResetAll,
-}) => {
-  const accessibilityOptions = [
-    {
-      id: "contrast",
-      title: "Contrast+",
-      icon: "contrast" as keyof typeof Ionicons.glyphMap,
-      iconSet: "Ionicons" as const,
-      isActive: false,
-      onToggle: () => {},
-    },
-    {
-      id: "highlightLinks",
-      title: "Highlight Links",
-      icon: "link-outline" as keyof typeof Ionicons.glyphMap,
-      iconSet: "Ionicons" as const,
-      isActive: false,
-      onToggle: () => {},
-    },
-    {
-      id: "biggerText",
-      title: "Bigger Text",
-      icon: "text-outline" as keyof typeof Ionicons.glyphMap,
-      iconSet: "Ionicons" as const,
-      isActive: biggerText,
-      onToggle: onToggleBiggerText,
-    },
-    {
-      id: "textSpacing",
-      title: "Text Spacing",
-      icon: (textSpacing === "tight"
-        ? "contract-outline"
-        : textSpacing === "normal"
-        ? "reorder-four-outline"
-        : textSpacing === "relaxed"
-        ? "add-outline"
-        : textSpacing === "loose"
-        ? "expand-outline"
-        : "apps-outline") as keyof typeof Ionicons.glyphMap,
-      iconSet: "Ionicons" as const,
-      isActive: textSpacing !== "normal",
-      onToggle: onToggleTextSpacing,
-    },
-    {
-      id: "pauseAnimations",
-      title: "Pause Animations",
-      icon: "pause-circle-outline" as keyof typeof Ionicons.glyphMap,
-      iconSet: "Ionicons" as const,
-      isActive: false,
-      onToggle: () => {},
-    },
-    {
-      id: "dyslexia",
-      title: "Dyslexia",
-      icon: "library-outline" as keyof typeof Ionicons.glyphMap,
-      iconSet: "Ionicons" as const,
-      isActive: false,
-      onToggle: () => {},
-    },
-    {
-      id: "cursor",
-      title: "Cursor",
-      icon: "navigate-outline" as keyof typeof Ionicons.glyphMap,
-      iconSet: "Ionicons" as const,
-      isActive: false,
-      onToggle: () => {},
-    },
-    {
-      id: "textAlign",
-      title: "Text Align",
-      icon: (textAlign === "center"
-        ? "align-center"
-        : textAlign === "right"
-        ? "align-right"
-        : "align-left") as keyof typeof Feather.glyphMap,
-      iconSet: "Feather" as const,
-      isActive: textAlign !== "left",
-      onToggle: onToggleTextAlign,
-    },
-    {
-      id: "lineHeight",
-      title: "Line Height",
-      icon: (lineHeight === "tight"
-        ? "contract-outline"
-        : lineHeight === "tighter"
-        ? "remove-outline"
-        : lineHeight === "normal"
-        ? "resize-outline"
-        : lineHeight === "wider"
-        ? "add-outline"
-        : "expand-outline") as keyof typeof Ionicons.glyphMap,
-      iconSet: "Ionicons" as const,
-      isActive: lineHeight !== "normal",
-      onToggle: onToggleLineHeight,
-    },
-  ];
+const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = (props) => {
+  const { visible, onClose, onResetAll } = props;
 
-  const renderAccessibilityOption = (
-    option: (typeof accessibilityOptions)[0]
-  ) => (
+  const renderAccessibilityOption = (option: AccessibilityOption) => (
     <TouchableOpacity
       key={option.id}
       style={[styles.optionCard, option.isActive && styles.optionCardActive]}
@@ -145,13 +30,13 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
           <Ionicons
             name={option.icon as keyof typeof Ionicons.glyphMap}
             size={24}
-            color={option.isActive ? Colors.light.surface : ""}
+            color={option.isActive ? colors.light.surface : ""}
           />
         ) : (
           <Feather
             name={option.icon as keyof typeof Feather.glyphMap}
             size={24}
-            color={option.isActive ? Colors.light.surface : ""}
+            color={option.isActive ? colors.light.surface : ""}
           />
         )}
       </View>
@@ -177,7 +62,7 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Accessibility Menu</Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Ionicons name="close" size={16} color={Colors.light.text} />
+              <Ionicons name="close" size={16} color={colors.light.text} />
             </TouchableOpacity>
           </View>
 
@@ -185,7 +70,7 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
 
           {/* Options Grid */}
           <View style={styles.optionsGrid}>
-            {accessibilityOptions.map(renderAccessibilityOption)}
+            {accessibilityOptions(props).map(renderAccessibilityOption)}
           </View>
 
           {/* Reset Button */}
@@ -197,7 +82,7 @@ const AccessibilityDrawer: React.FC<AccessibilityDrawerProps> = ({
             <Ionicons
               name="refresh"
               size={20}
-              color={Colors.light.surface}
+              color={colors.light.surface}
               style={styles.resetIcon}
             />
             <Text style={styles.resetButtonText}>Reset All Accessibility</Text>
@@ -242,7 +127,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: Colors.light.text,
+    color: colors.light.text,
   },
   closeButton: {
     padding: 4,
@@ -273,8 +158,8 @@ const styles = StyleSheet.create({
     borderColor: "white",
   },
   optionCardActive: {
-    backgroundColor: Colors.light.primary,
-    borderColor: Colors.light.primary,
+    backgroundColor: colors.light.primary,
+    borderColor: colors.light.primary,
   },
   iconContainer: {
     width: 40,
@@ -291,15 +176,15 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 12,
     fontWeight: "500",
-    color: Colors.light.text,
+    color: colors.light.text,
     textAlign: "center",
     lineHeight: 16,
   },
   optionTextActive: {
-    color: Colors.light.surface,
+    color: colors.light.surface,
   },
   resetButton: {
-    backgroundColor: Colors.light.secondary,
+    backgroundColor: colors.light.secondary,
     borderRadius: 24,
     paddingVertical: 16,
     paddingHorizontal: 20,
@@ -314,7 +199,7 @@ const styles = StyleSheet.create({
   resetButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: Colors.light.surface,
+    color: colors.light.surface,
   },
 });
 

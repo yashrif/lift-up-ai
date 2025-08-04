@@ -8,7 +8,7 @@
 const tintColorLight = '#7B2CBF';
 const tintColorDark = '#9d4edd';
 
-export const Colors = {
+export const colors = {
   light: {
     text: '#333333',
     textSecondary: '#666666',

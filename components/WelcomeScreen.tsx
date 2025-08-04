@@ -1,12 +1,17 @@
-import { Colors } from "@/constants/Colors";
+import { colors } from "@/constants/colors";
+import { welcomeTexts } from "@/constants/welcome";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useMemo, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AccessibilityDrawer from "./AccessibilityDrawer";
 import { Logo } from "./Icons";
 
 const WelcomeScreen = () => {
+  // safe area insets for proper spacing
+  const insets = useSafeAreaInsets();
+
   // state management
   const [isAccessibilityDrawerVisible, setIsAccessibilityDrawerVisible] =
     useState(false);
@@ -98,19 +103,19 @@ const WelcomeScreen = () => {
     };
   };
 
-  const getContainerStyles = () => ({
-    backgroundColor: "transparent",
-  });
-
   return (
     <>
-      <View style={styles.topBar}>
+      <View style={[styles.topBar, { marginTop: insets.top + 10 }]}>
         <TouchableOpacity onPress={() => setIsAccessibilityDrawerVisible(true)}>
           <View style={styles.accessibilityButton}>
             <View style={styles.accessibilityIconContainer}>
               <Ionicons name="accessibility" style={styles.accessibilityIcon} />
             </View>
-            <Text style={styles.accessibilityText}>Accessibility</Text>
+            {!isAccessibilityDrawerVisible && (
+              <Text style={styles.accessibilityText}>
+                {welcomeTexts.accessibility}
+              </Text>
+            )}
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
@@ -120,13 +125,13 @@ const WelcomeScreen = () => {
               style={styles.languageIcon}
               resizeMode="contain"
             />
-            <Text style={styles.languageText}>English</Text>
+            <Text style={styles.languageText}>{welcomeTexts.language}</Text>
             <Ionicons name="chevron-down" size={20} color="#000000" />
           </View>
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.bottomContainer, getContainerStyles()]}>
+      <View style={styles.bottomContainer}>
         {/* Main Content */}
         <View
           style={[
@@ -151,7 +156,9 @@ const WelcomeScreen = () => {
             ]}
           >
             <Logo style={styles.logo} />
-            <Text style={getTextStyles(styles.appName)}>LiftUP Ai</Text>
+            <Text style={getTextStyles(styles.appName)}>
+              {welcomeTexts.appName}
+            </Text>
           </View>
 
           {/* Welcome Text */}
@@ -163,13 +170,15 @@ const WelcomeScreen = () => {
               },
             ]}
           >
-            <Text style={getTextStyles(styles.welcomeText)}>Welcome to</Text>
+            <Text style={getTextStyles(styles.welcomeText)}>
+              {welcomeTexts.welcomeTo}
+            </Text>
             <Text style={getTextStyles(styles.welcomeTextAppName)}>
-              LiftUP Ai
+              {welcomeTexts.appName}
             </Text>
           </View>
           <Text style={getTextStyles(styles.subtitle)}>
-            Your Smart Learning Companion!
+            {welcomeTexts.subtitle}
           </Text>
         </View>
 
@@ -178,7 +187,7 @@ const WelcomeScreen = () => {
           <LinearGradient
             colors={["#ffe066", "#9d4edd"]}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }} // 90deg → left to right
+            end={{ x: 1, y: 0 }}
             style={styles.getStartedButton}
           >
             <View
@@ -188,12 +197,14 @@ const WelcomeScreen = () => {
                 alignItems: "center",
               }}
             >
-              <Text style={styles.getStartedText}>Get Started</Text>
+              <Text style={styles.getStartedText}>
+                {welcomeTexts.getStarted}
+              </Text>
               <Ionicons name="chevron-forward" size={24} color="#ffffff" />
             </View>
           </LinearGradient>
           <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginText}>Log in</Text>
+            <Text style={styles.loginText}>{welcomeTexts.login}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -216,12 +227,12 @@ const WelcomeScreen = () => {
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   topBar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 10,
   },
   accessibilityButton: {
     flexDirection: "row",
@@ -229,7 +240,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: Colors.light.surfaceTransparent,
+    backgroundColor: "white",
     borderRadius: 20,
   },
   accessibilityIconContainer: {
@@ -238,7 +249,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 24,
     width: 24,
-    borderColor: Colors.light.borderDark,
+    borderColor: colors.light.borderDark,
     borderWidth: 1.5,
     borderRadius: 9999,
   },
@@ -246,7 +257,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   accessibilityText: {
-    color: Colors.light.primary,
+    color: colors.light.text,
     fontSize: 16,
     fontWeight: "500",
   },
@@ -256,7 +267,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: Colors.light.surfaceTransparent,
+    backgroundColor: "transparent",
     borderRadius: 20,
   },
   languageIcon: {
@@ -264,7 +275,7 @@ const styles = StyleSheet.create({
     height: 20,
   },
   languageText: {
-    color: Colors.light.primary,
+    color: colors.light.primary,
     fontSize: 16,
     fontWeight: "500",
   },
@@ -272,6 +283,7 @@ const styles = StyleSheet.create({
   bottomContainer: {
     flexDirection: "column",
     gap: 32,
+    backgroundColor: "transparent",
   },
   content: {
     justifyContent: "center",
@@ -291,7 +303,7 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 36,
     fontWeight: "bold",
-    color: Colors.light.primary,
+    color: colors.light.primary,
     letterSpacing: 0.5,
     lineHeight: 42,
   },
@@ -303,20 +315,20 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 32,
     fontWeight: "600",
-    color: Colors.light.text,
+    color: colors.light.text,
     lineHeight: 38,
     letterSpacing: 0.5,
   },
   welcomeTextAppName: {
     fontSize: 32,
     fontWeight: "600",
-    color: Colors.light.secondary,
+    color: colors.light.secondary,
     lineHeight: 38,
     letterSpacing: 0.5,
   },
   subtitle: {
     fontSize: 16,
-    color: Colors.light.textSecondary,
+    color: colors.light.textSecondary,
     lineHeight: 24,
     letterSpacing: 0.3,
   },
@@ -343,7 +355,7 @@ const styles = StyleSheet.create({
   loginButton: {
     paddingVertical: 16,
     borderRadius: 30,
-    backgroundColor: Colors.light.surface,
+    backgroundColor: colors.light.surface,
     alignItems: "center",
   },
   loginText: {
